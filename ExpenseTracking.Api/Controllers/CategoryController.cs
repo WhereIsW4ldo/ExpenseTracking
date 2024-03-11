@@ -1,5 +1,4 @@
 ﻿using ExpenseTracking.Domain.Services;
-using ExpenseTracking.Shared.DataModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTracking.Api.Controllers;
@@ -15,17 +14,48 @@ public class CategoryController
         _service = service;
     }
 
-    [HttpGet(Name = "GetCategories")]
-    public IEnumerable<Category> Get()
+    [HttpGet]
+    public IActionResult GetCategories()
     {
         try
         {
-            return _service.GetCategories();
+            var categories = _service.GetCategories();
+            return new OkObjectResult(categories);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return new List<Category>();
+            return new NotFoundResult();
+        }
+    }
+    
+    [HttpPut]
+    public IActionResult AddCategory(string name)
+    {
+        try
+        {
+            _service.AddCategory(name);
+            return new OkResult();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new NotFoundResult();
+        }
+    }
+    
+    [HttpDelete]
+    public IActionResult RemoveCategory(int id)
+    {
+        try
+        {
+            var removedCategory = _service.RemoveCategory(id);
+            return new OkObjectResult(removedCategory);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new NotFoundResult();
         }
     }
 }

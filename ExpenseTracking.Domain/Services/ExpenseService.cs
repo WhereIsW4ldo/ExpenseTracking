@@ -1,64 +1,113 @@
-﻿using ExpenseTracking.Domain.Logic;
-using ExpenseTracking.Shared;
+﻿using ExpenseTracking.Shared.DAL;
 using ExpenseTracking.Shared.DataModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace ExpenseTracking.Domain.Services;
 
 public class ExpenseService
 {
     private readonly ILogger _logger;
-    private readonly ExpenseParser _expenseParser;
-    
-    public ExpenseService()
+    private readonly ExpenseContext _context;
+
+    public ExpenseService(ExpenseContext context)
     {
         _logger = new Logger<CategoryService>(new NullLoggerFactory());
-        _expenseParser = new ExpenseParser(new NullLoggerFactory());
+        _context = context;
     }
 
-    private void SaveExpenses(IEnumerable<Expense> expenses)
+    public Expense AddExpense(double amount, string description, int categoryId, string expenseDate)
     {
-        var serializeObject = JsonConvert.SerializeObject(expenses, Formatting.Indented);
-        File.WriteAllText(Constants.ExpensesJsonPath, serializeObject);
-    }
-
-    public IEnumerable<Expense> GetExpenses()
-    {
-        return _expenseParser.GetExpenses();
-    }
-
-    public IEnumerable<Expense> GetExpensesForCategory(string categoryName)
-    {
-        return _expenseParser.GetExpenses().Where(ex => ex.CategoryName == categoryName);
-    }
-
-    public Expense GetExpense(int id)
-    {
-        return _expenseParser.GetExpenses().First(ex => ex.ID == id);
-    }
-
-    public void EditExpense(int id, double amount, string categoryName, string expenseDate, string description)
-    {
-        var expenses = GetExpenses().ToList();
-
-        var expenseToEdit = expenses.FirstOrDefault(ex => ex.ID == id);
-
-        var expenseRemoved = expenses.Remove(expenseToEdit);
-
-        if (!expenseRemoved) return;
+        var category = _context
+            .Categories
+            .FirstOrDefault(c => c.Id == categoryId);
         
-        var newExpense = new Expense
+        if (category is null)
         {
-            ID = id,
+            throw new ArgumentException("Invalid category");
+        }
+        
+        var expense = new Expense
+        {
             Amount = amount,
             Description = description,
-            CategoryName = categoryName,
+            Category = category,
             ExpenseDate = DateTime.Parse(expenseDate),
-            CreationDate = expenseToEdit.CreationDate
+            CreationDate = DateTime.Now
         };
-        expenses.Add(newExpense);
-        SaveExpenses(expenses);
+
+        _context.Add(expense);
+        _context.SaveChanges();
+        
+        return expense;
+    }
+    
+    public IEnumerable<Expense> GetExpenses()
+    {
+        var categories = _context
+            .Categories
+            .ToList();
+        
+        return _context
+            .Expenses
+            .ToList();
+    }
+
+    public IEnumerable<Expense> GetExpensesForCategory(int categoryId)
+    {
+        var categoryToFind = _context
+            .Categories
+            .FirstOrDefault(c => c.Id == categoryId);
+        
+        return _context
+            .Expenses
+            .Where(ex => ex.Category == categoryToFind)
+            .ToList();
+    }
+    
+    public Expense DeleteExpense(int id)
+    {
+        var categories = _context
+            .Categories
+            .ToList();
+        
+        var expenseToDelete = _context
+            .Expenses
+            .FirstOrDefault(ex => ex.ID == id);
+        
+        if (expenseToDelete is null)
+        {
+            throw new ArgumentException("Invalid expense");
+        }
+        
+        _context.Remove(expenseToDelete);
+        _context.SaveChanges();
+
+        return expenseToDelete;
+    }
+
+    public Expense EditExpense(int id, double amount, string categoryName, string expenseDate, string description)
+    {
+        var expenseToEdit = _context
+            .Expenses
+            .FirstOrDefault(ex => ex.ID == id);
+        
+        var category = _context
+            .Categories
+            .FirstOrDefault(c => c.Name == categoryName);
+        
+        if (expenseToEdit is null || category is null)
+        {
+            throw new ArgumentException("Invalid expense or category");
+        }
+        
+        expenseToEdit.Amount = amount;
+        expenseToEdit.Category = category;
+        expenseToEdit.ExpenseDate = DateTime.Parse(expenseDate);
+        expenseToEdit.Description = description;
+
+        _context.Update(expenseToEdit);
+        _context.SaveChanges();
+        return expenseToEdit;
     }
 }

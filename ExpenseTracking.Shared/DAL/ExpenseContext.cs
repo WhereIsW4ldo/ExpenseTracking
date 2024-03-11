@@ -1,18 +1,12 @@
-﻿using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
-using ExpenseTracking.Shared.DataModels;
+﻿using ExpenseTracking.Shared.DataModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracking.Shared.DAL;
 
 public class ExpenseContext : DbContext
 {
-    public ExpenseContext() : base("ExpenseContext") { }
-    
     public DbSet<Expense> Expenses { get; set; }
     public DbSet<Category> Categories { get; set; }
-
-    protected override void OnModelCreating(DbModelBuilder modelBuilder)
-    {
-        modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-    }
+    
+    public ExpenseContext(DbContextOptions options) : base(options) { }
 }

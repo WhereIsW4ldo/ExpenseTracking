@@ -15,19 +15,49 @@ public class ExpenseController
         _service = service;
     }
 
-    [HttpGet(Name = "GetExpenses")]
-    public IEnumerable<Expense> GetExpenses(string category = "")
+    [HttpGet]
+    public IActionResult GetExpenses(int? category)
     {
         try
         {
-            return string.IsNullOrWhiteSpace(category)
-                ? _service.GetExpenses()
-                : _service.GetExpensesForCategory(category);
+            return category is null
+                ? new OkObjectResult(_service.GetExpenses())
+                : new OkObjectResult(_service.GetExpensesForCategory(category.Value));
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return new List<Expense>();
+            return new BadRequestObjectResult(e.Message);
+        }
+    }
+    
+    [HttpPut]
+    public IActionResult PutExpenses(double amount, string description, int categoryId, string expenseDate)
+    {
+        try
+        {
+            var expense = _service.AddExpense(amount, description, categoryId, expenseDate);
+            return new OkObjectResult(expense);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new BadRequestObjectResult(e.Message);
+        }
+    }
+    
+    [HttpDelete]
+    public IActionResult DeleteExpenses(int id)
+    {
+        try
+        {
+            var removedExpense = _service.DeleteExpense(id);
+            return new OkObjectResult(removedExpense);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new BadRequestObjectResult(e.Message);
         }
     }
 }
