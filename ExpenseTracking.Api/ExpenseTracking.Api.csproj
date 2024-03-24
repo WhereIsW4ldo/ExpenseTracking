@@ -23,4 +23,22 @@
       <ProjectReference Include="..\ExpenseTracking.Domain\ExpenseTracking.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="obj\Debug\net7.0\apphost.exe" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Api.csproj.CopyComplete" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Api.csproj.CoreCompileInputs.cache" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Api.csproj.FileListAbsolute.txt" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Api.dll" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Api.genruntimeconfig.cache" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Api.MvcApplicationPartsAssemblyInfo.cache" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Api.pdb" />
+      <Content Include="obj\Debug\net7.0\project.razor.json" />
+      <Content Include="obj\Debug\net7.0\staticwebassets.build.json" />
+      <Content Include="obj\rider.project.model.nuget.info" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="obj\Debug\net7.0\ExpenseTracking.Api.MvcApplicationPartsAssemblyInfo.cs" />
+    </ItemGroup>
+
 </Project>

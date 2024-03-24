@@ -15,4 +15,13 @@
       <ProjectReference Include="..\ExpenseTracking.Shared\ExpenseTracking.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Domain.csproj.CopyComplete" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Domain.csproj.CoreCompileInputs.cache" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Domain.csproj.FileListAbsolute.txt" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Domain.dll" />
+      <Content Include="obj\Debug\net7.0\ExpenseTracking.Domain.pdb" />
+      <Content Include="obj\rider.project.model.nuget.info" />
+    </ItemGroup>
+
 </Project>
