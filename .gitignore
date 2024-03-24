@@ -3,8 +3,8 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-*/bin
-*/obj
+*/bin/
+*/obj/
 
 # dotenv files
 .env
@@ -482,10 +482,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-<<<<<<< HEAD
 
 # Vim temporary swap files
 *.swp
 /ExpenseTracking.Api/obj/
-=======
->>>>>>> 936f2c2 (gitignore)
