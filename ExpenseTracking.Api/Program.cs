@@ -19,7 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<CategoryService>();
-builder.Services.AddScoped<ExpenseService>();
+builder.Services.AddScoped<TransactionService>();
 
 var app = builder.Build();
 

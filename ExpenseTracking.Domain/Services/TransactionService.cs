@@ -5,18 +5,18 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ExpenseTracking.Domain.Services;
 
-public class ExpenseService
+public class TransactionService
 {
     private readonly ILogger _logger;
     private readonly ExpenseContext _context;
 
-    public ExpenseService(ExpenseContext context)
+    public TransactionService(ExpenseContext context)
     {
         _logger = new Logger<CategoryService>(new NullLoggerFactory());
         _context = context;
     }
 
-    public Expense AddExpense(double amount, string description, int categoryId, string expenseDate)
+    public Expense AddTransaction(double amount, string description, int categoryId, string expenseDate)
     {
         var category = _context
             .Categories
@@ -42,18 +42,14 @@ public class ExpenseService
         return expense;
     }
     
-    public IEnumerable<Expense> GetExpenses()
+    public IEnumerable<Expense> GetTransaction()
     {
-        var categories = _context
-            .Categories
-            .ToList();
-        
         return _context
             .Expenses
             .ToList();
     }
 
-    public IEnumerable<Expense> GetExpensesForCategory(int categoryId)
+    public IEnumerable<Expense> GetTransactionsForCategory(int categoryId)
     {
         var categoryToFind = _context
             .Categories
@@ -65,13 +61,9 @@ public class ExpenseService
             .ToList();
     }
     
-    public Expense DeleteExpense(int id)
+    public Expense DeleteTransaction(int id)
     {
-        var categories = _context
-            .Categories
-            .ToList();
-        
-        var expenseToDelete = _context
+       var expenseToDelete = _context
             .Expenses
             .FirstOrDefault(ex => ex.ID == id);
         
@@ -86,7 +78,7 @@ public class ExpenseService
         return expenseToDelete;
     }
 
-    public Expense EditExpense(int id, double amount, string categoryName, string expenseDate, string description)
+    public Expense EditTransaction(int id, double amount, string categoryName, string expenseDate, string description)
     {
         var expenseToEdit = _context
             .Expenses

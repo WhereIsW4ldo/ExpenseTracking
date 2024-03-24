@@ -6,11 +6,11 @@ namespace ExpenseTracking.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ExpenseController
+public class TransactionController
 {
-    private readonly ExpenseService _service;
+    private readonly TransactionService _service;
 
-    public ExpenseController(ExpenseService service)
+    public TransactionController(TransactionService service)
     {
         _service = service;
     }
@@ -21,8 +21,8 @@ public class ExpenseController
         try
         {
             return category is null
-                ? new OkObjectResult(_service.GetExpenses())
-                : new OkObjectResult(_service.GetExpensesForCategory(category.Value));
+                ? new OkObjectResult(_service.GetTransaction())
+                : new OkObjectResult(_service.GetTransactionsForCategory(category.Value));
         }
         catch (Exception e)
         {
@@ -36,7 +36,7 @@ public class ExpenseController
     {
         try
         {
-            var expense = _service.AddExpense(amount, description, categoryId, expenseDate);
+            var expense = _service.AddTransaction(amount, description, categoryId, expenseDate);
             return new OkObjectResult(expense);
         }
         catch (Exception e)
@@ -51,7 +51,7 @@ public class ExpenseController
     {
         try
         {
-            var removedExpense = _service.DeleteExpense(id);
+            var removedExpense = _service.DeleteTransaction(id);
             return new OkObjectResult(removedExpense);
         }
         catch (Exception e)
