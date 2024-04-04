@@ -1,0 +1,10 @@
+services:
+  database:
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - "1433:1433"
+  
+  backend:
+    image: api
+    ports: 
+      - "80:80"
