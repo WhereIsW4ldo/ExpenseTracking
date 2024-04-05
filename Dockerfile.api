@@ -10,10 +10,9 @@ RUN dotnet restore
 # Build and publish a release
 RUN dotnet publish -c Release -o out
 
-RUN ls /ExpenseTracking
-
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /ExpenseTracking
-COPY --from=build /ExpenseTracking/out/. .
-ENTRYPOINT ["dotnet", "./ExpenseTracking/out/ExpenseTracking.Api.dll"]
+COPY --from=build /ExpenseTracking/out/* .
+EXPOSE 5000
+ENTRYPOINT ["dotnet", "ExpenseTracking.Api.dll"]

@@ -36,7 +36,7 @@ public class TransactionService
             CreationDate = DateTime.Now
         };
 
-        _context.Add(expense);
+        _context.Expenses.Add(expense);
         _context.SaveChanges();
         
         return expense;
@@ -65,14 +65,14 @@ public class TransactionService
     {
        var expenseToDelete = _context
             .Expenses
-            .FirstOrDefault(ex => ex.ID == id);
+            .FirstOrDefault(ex => ex.Id == id);
         
         if (expenseToDelete is null)
         {
             throw new ArgumentException("Invalid expense");
         }
         
-        _context.Remove(expenseToDelete);
+        _context.Expenses.Remove(expenseToDelete);
         _context.SaveChanges();
 
         return expenseToDelete;
@@ -82,7 +82,7 @@ public class TransactionService
     {
         var expenseToEdit = _context
             .Expenses
-            .FirstOrDefault(ex => ex.ID == id);
+            .FirstOrDefault(ex => ex.Id == id);
         
         var category = _context
             .Categories

@@ -8,8 +8,15 @@ services:
       SA_PASSWORD: "Contraseña12345678"
     ports:
       - 1433:1433
+    networks:
+      - backend
   
   backend:
     image: api
     ports: 
-      - "80:80"
+      - 5000:5000
+    networks:
+      - backend
+
+networks:
+  backend:

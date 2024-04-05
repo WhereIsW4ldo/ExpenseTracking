@@ -1,3 +1,4 @@
+using ExpenseTracking.Api;
 using ExpenseTracking.Domain.Services;
 using ExpenseTracking.Shared.DAL;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +21,22 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<Seeder>();
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    
 
-app.UseHttpsRedirection();
+    using var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
+    seeder.Seed();
+}
 
 app.UseAuthorization();
 

@@ -37,15 +37,57 @@ namespace ExpenseTracking.Shared.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Groceries"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Utilities"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Rent"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Transportation"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Entertainment"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Health"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Insurance"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Other"
+                        });
                 });
 
             modelBuilder.Entity("ExpenseTracking.Shared.DataModels.Expense", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<double>("Amount")
                         .HasColumnType("float");
@@ -64,7 +106,7 @@ namespace ExpenseTracking.Shared.Migrations
                     b.Property<DateTime>("ExpenseDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 

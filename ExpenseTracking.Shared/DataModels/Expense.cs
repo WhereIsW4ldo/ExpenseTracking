@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExpenseTracking.Shared.DataModels;
 
-public class Expense
+public class Expense : GenericDataModel
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]
-    public int ID { get; set; }
+    public int Id { get; set; }
     [Required]
     public double Amount { get; set; }
     [MaxLength(255)]
@@ -16,4 +18,5 @@ public class Expense
     public DateTime ExpenseDate { get; set; }
     [Required]
     public DateTime CreationDate { get; set; }
+
 }
