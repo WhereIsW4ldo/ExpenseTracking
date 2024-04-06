@@ -8,10 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // Add database connections
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var databaseConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var userName = Environment.GetEnvironmentVariable("POSTGRES_USER");
+var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+
+var connectionString = string.Format(databaseConnection, userName, password);
+
 builder.Services.AddDbContext<ExpenseContext>(options =>
 {
-    options.UseSqlServer(connectionString);
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddControllers();
@@ -31,8 +37,6 @@ app.UseSwaggerUI();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    
-
     using var scope = app.Services.CreateScope();
     var seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
     seeder.Seed();

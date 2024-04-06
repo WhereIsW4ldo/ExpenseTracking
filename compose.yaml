@@ -1,18 +1,22 @@
 services:
-  database:
-    container_name: sqlServer
-    image: mcr.microsoft.com/mssql/server
+  postgres:
+    container_name: postgres
+    image: postgres
     restart: always
+    shm_size: 128mb
     environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Contraseña12345678"
+      POSTGRES_PASSWORD: example
     ports:
-      - 1433:1433
+      - 5432:5432
     networks:
       - backend
   
   backend:
+    container_name: api
     image: api
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
     ports: 
       - 5000:5000
     networks:
@@ -20,3 +24,5 @@ services:
 
 networks:
   backend:
+    name: backend
+    driver: bridge

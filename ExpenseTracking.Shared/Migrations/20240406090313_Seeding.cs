@@ -7,12 +7,11 @@
 namespace ExpenseTracking.Shared.Migrations
 {
     /// <inheritdoc />
-    public partial class DataSeeding : Migration
+    public partial class Seeding : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            #if DEBUG
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "Name" },
@@ -27,13 +26,11 @@ namespace ExpenseTracking.Shared.Migrations
                     { 7, "Insurance" },
                     { 8, "Other" }
                 });
-            #endif
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            #if DEBUG
             migrationBuilder.DeleteData(
                 table: "Categories",
                 keyColumn: "Id",
@@ -73,7 +70,6 @@ namespace ExpenseTracking.Shared.Migrations
                 table: "Categories",
                 keyColumn: "Id",
                 keyValue: 8);
-            #endif
         }
     }
 }

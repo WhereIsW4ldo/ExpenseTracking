@@ -32,8 +32,8 @@ public class TransactionService
             Amount = amount,
             Description = description,
             Category = category,
-            ExpenseDate = DateTime.Parse(expenseDate),
-            CreationDate = DateTime.Now
+            ExpenseDate = DateTime.Parse(expenseDate).ToUniversalTime(),
+            CreationDate = DateTime.Now.ToUniversalTime()
         };
 
         _context.Expenses.Add(expense);
@@ -95,7 +95,7 @@ public class TransactionService
         
         expenseToEdit.Amount = amount;
         expenseToEdit.Category = category;
-        expenseToEdit.ExpenseDate = DateTime.Parse(expenseDate);
+        expenseToEdit.ExpenseDate = DateTime.Parse(expenseDate).ToUniversalTime();
         expenseToEdit.Description = description;
 
         _context.Update(expenseToEdit);
