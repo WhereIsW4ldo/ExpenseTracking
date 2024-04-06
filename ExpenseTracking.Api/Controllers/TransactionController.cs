@@ -21,7 +21,7 @@ public class TransactionController
         try
         {
             return category is null
-                ? new OkObjectResult(_service.GetTransaction())
+                ? new OkObjectResult(_service.GetTransactions())
                 : new OkObjectResult(_service.GetTransactionsForCategory(category.Value));
         }
         catch (Exception e)
@@ -53,6 +53,21 @@ public class TransactionController
         {
             var removedExpense = _service.DeleteTransaction(id);
             return new OkObjectResult(removedExpense);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new BadRequestObjectResult(e.Message);
+        }
+    }
+    
+    [HttpPost]
+    public IActionResult UpdateTransaction(int id, double amount, string description, int categoryId, string expenseDate)
+    {
+        try
+        {
+            var updatedExpense = _service.UpdateTransaction(id, amount, description, categoryId, expenseDate);
+            return new OkObjectResult(updatedExpense);
         }
         catch (Exception e)
         {

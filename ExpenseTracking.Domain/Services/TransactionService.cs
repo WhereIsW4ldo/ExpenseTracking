@@ -42,7 +42,7 @@ public class TransactionService
         return expense;
     }
     
-    public IEnumerable<Expense> GetTransaction()
+    public IEnumerable<Expense> GetTransactions()
     {
         return _context
             .Expenses
@@ -78,15 +78,15 @@ public class TransactionService
         return expenseToDelete;
     }
 
-    public Expense EditTransaction(int id, double amount, string categoryName, string expenseDate, string description)
+    public Expense UpdateTransaction(int id, double amount, string description, int categoryId, string expenseDate)
     {
         var expenseToEdit = _context
             .Expenses
-            .FirstOrDefault(ex => ex.Id == id);
-        
+            .Find(id);
+
         var category = _context
             .Categories
-            .FirstOrDefault(c => c.Name == categoryName);
+            .Find(categoryId);
         
         if (expenseToEdit is null || category is null)
         {

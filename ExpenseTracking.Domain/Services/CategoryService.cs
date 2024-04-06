@@ -44,4 +44,16 @@ public class CategoryService
         }
         throw new ArgumentException("Category not found");
     }
+    
+    public Category UpdateCategory(int id, string name)
+    {
+        var category = _context.Categories.Find(id);
+        if (category != null)
+        {
+            category.Name = name;
+            _context.SaveChanges();
+            return category;
+        }
+        throw new ArgumentException("Category not found");
+    }
 }

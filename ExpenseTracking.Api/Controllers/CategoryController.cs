@@ -58,4 +58,19 @@ public class CategoryController
             return new NotFoundResult();
         }
     }
+    
+    [HttpPost]
+    public IActionResult UpdateCategory(int id, string name)
+    {
+        try
+        {
+            var updatedCategory = _service.UpdateCategory(id, name);
+            return new OkObjectResult(updatedCategory);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new NotFoundResult();
+        }
+    }
 }
