@@ -1,0 +1,15 @@
+meta {
+  name: Add category
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{API-URL}}/Category?name=testCategory
+  body: none
+  auth: none
+}
+
+query {
+  name: testCategory
+}

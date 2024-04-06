@@ -20,6 +20,8 @@ builder.Services.AddDbContext<ExpenseContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+builder.Services.AddCors();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -30,6 +32,11 @@ builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<Seeder>();
 
 var app = builder.Build();
+
+app.UseCors( options => options
+    .AllowAnyOrigin()
+    .AllowAnyHeader()
+    .AllowAnyMethod());
 
 app.UseSwagger();
 app.UseSwaggerUI();

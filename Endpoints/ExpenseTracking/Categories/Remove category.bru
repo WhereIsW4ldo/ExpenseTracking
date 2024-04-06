@@ -1,0 +1,15 @@
+meta {
+  name: Remove category
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{API-URL}}/Category?id=10
+  body: none
+  auth: none
+}
+
+query {
+  id: 10
+}

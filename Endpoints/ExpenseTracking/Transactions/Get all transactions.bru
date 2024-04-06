@@ -1,0 +1,15 @@
+meta {
+  name: Get all transactions
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{API-URL}}/Transaction?category=1
+  body: none
+  auth: none
+}
+
+query {
+  category: 1
+}
