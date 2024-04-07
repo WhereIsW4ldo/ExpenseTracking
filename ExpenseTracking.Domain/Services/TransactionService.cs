@@ -44,6 +44,10 @@ public class TransactionService
     
     public IEnumerable<Expense> GetTransactions()
     {
+        var categories = _context
+            .Categories
+            .ToList();
+        
         return _context
             .Expenses
             .ToList();
