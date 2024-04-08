@@ -7,7 +7,7 @@
 
 	let value = '';
 	let test = '';
-	let submittedCategoryName: string = null;
+	let submittedCategoryName: string = '';
 
 	onMount(() => {
 		GetCategories();
@@ -98,23 +98,52 @@
 			.then((trans: Transaction[]) => {
 				console.log(trans);
 				transactions = writable(trans.sort((a, b) => {
-					let a_d = new Date(a);
-					let b_d = new Date(b);
+					let a_d = new Date(a.toString());
+					let b_d = new Date(b.toString());
 					return a_d.getTime() - b_d.getTime();
 				}));
 			});
 	}
 
 	export async function AddTransaction() {
-
-
-		await fetch('http://localhost:5000/Transaction', {
-			method: 'PUT'
-		});
+		// await fetch('http://localhost:5000/Transaction', {
+		// 	method: 'PUT'
+		// });
 	}
 
-	export async function ValidEnteredTransactionData(): boolean {
-		return false;
+	export function ValidEnteredTransactionData(): boolean {
+		let amount = (document.getElementById('TransactionAmount') as HTMLInputElement)?.value;
+		let category = (<HTMLSelectElement>document.getElementById('TransactionCategory'))?.value;
+		let dateValue = (document.getElementById('TransactionDate') as HTMLInputElement)?.value;
+
+		console.log('Entered Amount: ', amount);
+		console.log('Category: ', category);
+		console.log('Date: ', dateValue);
+
+		let valid = true;
+
+		if (amount == null || amount === '') {
+			document.getElementById('TransactionAmountWarning')?.removeAttribute('hidden');
+			valid = false;
+		} else {
+			document.getElementById('TransactionAmountWarning')?.setAttribute('hidden', 'true');
+		}
+
+		if (category == null || category === '') {
+			document.getElementById('TransactionCategoryWarning')?.removeAttribute('hidden');
+			valid = false;
+		} else {
+			document.getElementById('TransactionCategoryWarning')?.setAttribute('hidden', 'true');
+		}
+
+		if (dateValue == null || dateValue === '') {
+			document.getElementById('TransactionDateWarning')?.removeAttribute('hidden');
+			valid = false
+		} else {
+			document.getElementById('TransactionDateWarning')?.setAttribute('hidden', 'true');
+		}
+
+		return valid;
 	}
 
 </script>
@@ -181,7 +210,10 @@
 		id="formAddCategory"
 		on:submit|preventDefault={() => {
 			submittedCategoryName = value;
-			document.getElementById('addCategoryTextField').innerText = '';
+			const addCategoryTextField = document.getElementById('addCategoryTextField');
+			if (addCategoryTextField) {
+				addCategoryTextField.innerText = '';
+			}
 		}}
 	>
 		<label>Add category: <input bind:value id="addCategoryTextField" /></label>
@@ -192,10 +224,11 @@
 <form id="transactionForm"
 			on:submit|preventDefault={() => {
 				if (ValidEnteredTransactionData()) {
+					console.log('Valid transaction data!');
 					AddTransaction();
 				}
 			}}>
-	<label>Amount: <input id="TransactionAmount" placeholder="amount" type="number"></label>
+	<label>Amount: <input id="TransactionAmount" placeholder="amount" type="number"><div id="TransactionAmountWarning" class="warning_text" hidden>Please fix your money amount!</div></label>
 	<br />
 	<label>Description: <textarea id="TransactionDescription" placeholder="description"></textarea></label>
 	<br />
@@ -205,9 +238,10 @@
 				<option value="{category.id}">{category.name}</option>
 			{/each}
 		</select>
+		<div id="TransactionCategoryWarning" class="warning_text" hidden>Please fix your money category!</div>
 	</label>
 	<br />
-	<label>ExpenseDate: <input id="TransactionDate" type="date"></label>
+	<label>ExpenseDate: <input id="TransactionDate" type="date"><div id="TransactionDateWarning" class="warning_text" >Please fix your money date!</div></label>
 	<br />
 	<input type="submit" value="Add Transaction" />
 </form>
@@ -242,6 +276,7 @@
 
     .menuIcon,
     .menuItem {
+        /*noinspection CssInvalidPropertyValue*/
         float: inline-start;
         margin-right: 40px;
     }
@@ -267,4 +302,8 @@
         margin: 3px 0;
         transition: 0.4s;
     }
+
+	.warning_text {
+		color: red;
+	}
 </style>
