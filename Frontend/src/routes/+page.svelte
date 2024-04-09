@@ -105,16 +105,33 @@
 			});
 	}
 
+	let transactionInputAmount = '';
+	let transactionInputDescription = '';
+	let transactionInputCategory = '';
+	let transactionInputDate = '';
+
 	export async function AddTransaction() {
-		// await fetch('http://localhost:5000/Transaction', {
-		// 	method: 'PUT'
-		// });
+		var amount = encodeURIComponent(transactionInputAmount);
+		var description = encodeURIComponent(transactionInputDescription);
+		var category = encodeURIComponent(transactionInputCategory);
+		var expenseDate = encodeURIComponent(transactionInputDate);
+
+		var url = `http://localhost:5000/Transaction?amount=${amount}&description=${description}&categoryId=${category}&expenseDate=${expenseDate}`;
+
+		// console.log('url: ', url);
+
+		await fetch(url, {
+			method: 'PUT'
+		}).then((response) => {
+			console.log("added transaction: ", response.status);
+		});
 	}
 
 	export function ValidEnteredTransactionData(): boolean {
 		let amount = (document.getElementById('TransactionAmount') as HTMLInputElement)?.value;
 		let category = (<HTMLSelectElement>document.getElementById('TransactionCategory'))?.value;
 		let dateValue = (document.getElementById('TransactionDate') as HTMLInputElement)?.value;
+		let description = (document.getElementById('TransactionDescription') as HTMLTextAreaElement)?.value;
 
 		console.log('Entered Amount: ', amount);
 		console.log('Category: ', category);
@@ -141,6 +158,21 @@
 			valid = false
 		} else {
 			document.getElementById('TransactionDateWarning')?.setAttribute('hidden', 'true');
+		}
+
+		if (valid)
+		{
+			transactionInputAmount = amount;
+			transactionInputDescription = description;
+			transactionInputCategory = category;
+			transactionInputDate = dateValue;
+		}
+		else
+		{
+			transactionInputAmount = '';
+			transactionInputDescription = '';
+			transactionInputCategory = '';
+			transactionInputDate = '';
 		}
 
 		return valid;
@@ -241,7 +273,7 @@
 		<div id="TransactionCategoryWarning" class="warning_text" hidden>Please fix your money category!</div>
 	</label>
 	<br />
-	<label>ExpenseDate: <input id="TransactionDate" type="date"><div id="TransactionDateWarning" class="warning_text" >Please fix your money date!</div></label>
+	<label>ExpenseDate: <input id="TransactionDate" type="date"><div id="TransactionDateWarning" class="warning_text" hidden>Please fix your money date!</div></label>
 	<br />
 	<input type="submit" value="Add Transaction" />
 </form>
