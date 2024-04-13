@@ -2,20 +2,6 @@
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 
-	export let categories: Writable<Category[]> = writable([]);
-	export let transactions: Writable<Transaction[]> = writable([]);
-
-	let value = '';
-	let test = '';
-	let submittedCategoryName: string = '';
-
-	onMount(() => {
-		GetCategories();
-		GetTransactions();
-	});
-
-	$: AddCategory(submittedCategoryName);
-
 	export class Category {
 		public id: number;
 		public name: string;
@@ -25,6 +11,35 @@
 			this.name = name;
 		}
 	}
+
+	export class Transaction {
+		public id: number;
+		public amount: number;
+		public description: string;
+		public category: Category;
+		public expenseDate: string;
+		public creationDate: string;
+
+		constructor(id: number, amount: number, description: string, category: Category, expenseDate: string, creationDate: string) {
+			this.id = id;
+			this.amount = amount;
+			this.description = description;
+			this.category = category;
+			this.expenseDate = expenseDate;
+			this.creationDate = creationDate;
+		}
+	}
+
+	export let categories: Writable<Category[]> = writable([]);
+	export let transactions: Writable<Transaction[]> = writable([]);
+
+	let value = '';
+	let submittedCategoryName: string = '';
+
+	onMount(() => {
+		GetCategories();
+		GetTransactions();
+	});
 
 	export async function GetCategories() {
 		await fetch('http://localhost:5000/Category')
@@ -74,35 +89,26 @@
 		await GetCategories();
 	}
 
-	export class Transaction {
-		public Id: number;
-		public Amount: number;
-		public Description: string;
-		public Category: Category;
-		public ExpenseDate: string;
-		public CreationDate: string;
-
-		constructor(id: number, amount: number, description: string, Category: Category, ExpenseDate: string, CreationDate: string) {
-			this.Id = id;
-			this.Amount = amount;
-			this.Description = description;
-			this.Category = Category;
-			this.ExpenseDate = ExpenseDate;
-			this.CreationDate = CreationDate;
-		}
-	}
-
 	export async function GetTransactions() {
 		await fetch('http://localhost:5000/Transaction')
-			.then((response) => response.json())
+			.then((response) => {
+				return response.json();
+			})
 			.then((trans: Transaction[]) => {
-				console.log(trans);
-				transactions = writable(trans.sort((a, b) => {
+				console.log(trans
+				.sort((a, b) => {
 					let a_d = new Date(a.toString());
 					let b_d = new Date(b.toString());
 					return a_d.getTime() - b_d.getTime();
 				}));
-			});
+				transactions = writable(trans
+				.sort((a, b) => {
+					let a_d = new Date(a.toString());
+					let b_d = new Date(b.toString());
+					return a_d.getTime() - b_d.getTime();
+				}));
+			})
+			.then(() => console.log("transactions: ", $transactions));
 	}
 
 	let transactionInputAmount = '';
@@ -118,13 +124,13 @@
 
 		var url = `http://localhost:5000/Transaction?amount=${amount}&description=${description}&categoryId=${category}&expenseDate=${expenseDate}`;
 
-		// console.log('url: ', url);
-
 		await fetch(url, {
 			method: 'PUT'
 		}).then((response) => {
 			console.log("added transaction: ", response.status);
 		});
+
+		await GetTransactions();
 	}
 
 	export function ValidEnteredTransactionData(): boolean {
@@ -177,6 +183,8 @@
 
 		return valid;
 	}
+
+	$: AddCategory(submittedCategoryName);
 
 </script>
 
@@ -253,6 +261,12 @@
 	</form>
 </div>
 
+<form>
+	<label>Get all transactions:
+		<button on:click={GetTransactions}>Get</button>
+	</label>
+</form>
+
 <form id="transactionForm"
 			on:submit|preventDefault={() => {
 				if (ValidEnteredTransactionData()) {
@@ -277,6 +291,32 @@
 	<br />
 	<input type="submit" value="Add Transaction" />
 </form>
+
+<h2>Transactions</h2>
+<table>
+	<thead>
+	<tr>
+		<th>Id</th>
+		<th>Amount</th>
+		<th>Description</th>
+		<th>Category</th>
+		<th>Expense Date</th>
+		<th>Creation Date</th>
+	</thead>
+	<tbody>
+	{#each $transactions as transaction}
+		<tr>
+			<td>{transaction.id}</td>
+			<td>{transaction.amount}</td>
+			<td>{transaction.description}</td>
+			<td>{transaction.category.name}</td>
+			<td>{transaction.expenseDate}</td>
+			<td>{transaction.creationDate}</td>
+		</tr>
+	{/each}
+</table>
+
+
 <style>
     table,
     th,
