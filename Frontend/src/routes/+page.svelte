@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
-	import Modal from './Modal.svelte';
+	import {
+		GetCategories,
+		AddCategory,
+		EditCategory,
+		RemoveCategory
+	} from './CategoryApiInteractions';
+	import { GetTransactions, AddTransaction } from './TransactionApiInteractions';
 
 	export class Category {
 		public id: number;
@@ -46,153 +52,15 @@
 	let value = '';
 	let submittedCategoryName: string = '';
 
-	onMount(() => {
-		GetCategories();
-		GetTransactions();
+	onMount(async () => {
+		categories = writable(await GetCategories());
+		transactions = writable(await GetTransactions());
 	});
-
-	export async function GetCategories() {
-		await fetch('http://localhost:5000/Category')
-			.then((response) => response.json())
-			.then((cats: Category[]) => {
-				categories = writable(cats.sort((a, b) => a.id - b.id));
-				console.log(cats);
-			});
-	}
-
-	export async function AddCategory(categoryName: string) {
-		if (categoryName === '' || categoryName == null) return;
-
-		await fetch(`http://localhost:5000/Category?name=${categoryName}`, {
-			method: 'PUT'
-		}).then((response) => {
-			console.log(response.status);
-		});
-
-		await GetCategories();
-	}
-
-	export async function RemoveCategory(categoryId: number) {
-		await fetch(`http://localhost:5000/Category?id=${categoryId}`, {
-			method: 'DELETE'
-		}).then((response) => {
-			console.log(response.status);
-		});
-
-		await GetCategories();
-	}
-
-	export async function EditCategory(categoryId: number, oldCategoryName: string) {
-		let categoryName = prompt('Please enter the new category name: ', oldCategoryName);
-
-		if (categoryName == null || categoryName == '') {
-			console.log('user cancelled prompt!');
-			return;
-		}
-
-		await fetch(`http://localhost:5000/Category?id=${categoryId}&name=${categoryName}`, {
-			method: 'POST'
-		}).then((response) => {
-			console.log(response.status);
-		});
-
-		await GetCategories();
-	}
-
-	export async function GetTransactions() {
-		await fetch('http://localhost:5000/Transaction')
-			.then((response) => {
-				return response.json();
-			})
-			.then((trans: Transaction[]) => {
-				console.log(
-					trans.sort((a, b) => {
-						let a_d = new Date(a.toString());
-						let b_d = new Date(b.toString());
-						return a_d.getTime() - b_d.getTime();
-					})
-				);
-				transactions = writable(
-					trans.sort((a, b) => {
-						let a_d = new Date(a.toString());
-						let b_d = new Date(b.toString());
-						return a_d.getTime() - b_d.getTime();
-					})
-				);
-			})
-			.then(() => console.log('transactions: ', $transactions));
-	}
 
 	let transactionInputAmount = '';
 	let transactionInputDescription = '';
 	let transactionInputCategory = '';
 	let transactionInputDate = '';
-
-	export async function AddTransaction() {
-		var amount = encodeURIComponent(transactionInputAmount);
-		var description = encodeURIComponent(transactionInputDescription);
-		var category = encodeURIComponent(transactionInputCategory);
-		var expenseDate = encodeURIComponent(transactionInputDate);
-
-		var url = `http://localhost:5000/Transaction?amount=${amount}&description=${description}&categoryId=${category}&expenseDate=${expenseDate}`;
-
-		await fetch(url, {
-			method: 'PUT'
-		}).then((response) => {
-			console.log('added transaction: ', response.status);
-		});
-
-		await GetTransactions();
-	}
-
-	export function ValidEnteredTransactionData(): boolean {
-		let amount = (document.getElementById('TransactionAmount') as HTMLInputElement)?.value;
-		let category = (<HTMLSelectElement>document.getElementById('TransactionCategory'))?.value;
-		let dateValue = (document.getElementById('TransactionDate') as HTMLInputElement)?.value;
-		let description = (document.getElementById('TransactionDescription') as HTMLTextAreaElement)
-			?.value;
-
-		console.log('Entered Amount: ', amount);
-		console.log('Category: ', category);
-		console.log('Date: ', dateValue);
-
-		let valid = true;
-
-		if (amount == null || amount === '') {
-			document.getElementById('TransactionAmountWarning')?.removeAttribute('hidden');
-			valid = false;
-		} else {
-			document.getElementById('TransactionAmountWarning')?.setAttribute('hidden', 'true');
-		}
-
-		if (category == null || category === '') {
-			document.getElementById('TransactionCategoryWarning')?.removeAttribute('hidden');
-			valid = false;
-		} else {
-			document.getElementById('TransactionCategoryWarning')?.setAttribute('hidden', 'true');
-		}
-
-		if (dateValue == null || dateValue === '') {
-			document.getElementById('TransactionDateWarning')?.removeAttribute('hidden');
-			valid = false;
-		} else {
-			document.getElementById('TransactionDateWarning')?.setAttribute('hidden', 'true');
-		}
-
-		if (valid) {
-			transactionInputAmount = amount;
-			transactionInputDescription = description;
-			transactionInputCategory = category;
-			transactionInputDate = dateValue;
-		} else {
-			transactionInputAmount = '';
-			transactionInputDescription = '';
-			transactionInputCategory = '';
-			transactionInputDate = '';
-		}
-
-		return valid;
-	}
 
 	$: AddCategory(submittedCategoryName);
 </script>
@@ -209,7 +77,11 @@
 </div>
 
 <div class="main">
-	<form on:submit|preventDefault={GetCategories}>
+	<form
+		on:submit|preventDefault={async () => {
+			categories = writable(await GetCategories());
+		}}
+	>
 		<label
 			>Get all categories:
 			<button>Get</button>
@@ -236,15 +108,17 @@
 					</td>
 					<td>
 						<form
-							on:submit|preventDefault={() => {
-								RemoveCategory(category.id);
+							on:submit|preventDefault={async () => {
+								await RemoveCategory(category.id);
+								categories = writable(await GetCategories());
 							}}
 						>
 							<button>Remove</button>
 						</form>
 						<form
-							on:submit|preventDefault={() => {
-								EditCategory(category.id, category.name);
+							on:submit|preventDefault={async () => {
+								await EditCategory(category.id, category.name);
+								categories = writable(await GetCategories());
 							}}
 						>
 							<button>Edit</button>
@@ -257,12 +131,13 @@
 
 	<form
 		id="formAddCategory"
-		on:submit|preventDefault={() => {
-			submittedCategoryName = value;
-			const addCategoryTextField = document.getElementById('addCategoryTextField');
-			if (addCategoryTextField) {
-				addCategoryTextField.innerText = '';
-			}
+		on:submit|preventDefault={async () => {
+			let addCategoryField = document.getElementById('addCategoryTextField');
+			if (addCategoryField === null) return;
+			const addCategoryTextField = addCategoryField as HTMLInputElement;
+			await AddCategory(addCategoryTextField.value);
+			categories = writable(await GetCategories());
+			addCategoryField.innerText = '';
 		}}
 	>
 		<label>Add category: <input bind:value id="addCategoryTextField" /></label>
@@ -273,19 +148,23 @@
 <form>
 	<label
 		>Get all transactions:
-		<button on:click={GetTransactions}>Get</button>
+		<button
+			on:click|preventDefault={async () => {
+				transactions = writable(await GetTransactions());
+			}}>Get</button
+		>
 	</label>
 </form>
 
 <form>
 	<button
-		on:click={() => {
+		on:click|preventDefault={() => {
 			showModal = true;
 		}}>Show modal</button
 	>
 </form>
 
-<Modal bind:showModal>
+<!-- <Modal bind:showModal>
 	<form
 		id="transactionForm"
 		on:submit|preventDefault={() => {
@@ -328,7 +207,7 @@
 		<br />
 		<input type="submit" value="Add Transaction" />
 	</form>
-</Modal>
+</Modal> -->
 
 <h2>Transactions</h2>
 <table>

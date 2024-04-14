@@ -1,7 +1,3 @@
-import { writable, type Writable } from 'svelte/store';
-
-export let categories: Writable<Category[]> = writable([]);
-
 export class Category {
 	public id: number;
 	public name: string;
@@ -12,12 +8,12 @@ export class Category {
 	}
 }
 
-export async function GetCategories() {
-	await fetch('http://localhost:5000/Category')
+export async function GetCategories(): Promise<Category[]> {
+	return await fetch('http://localhost:5000/Category')
 		.then((response) => response.json())
 		.then((cats: Category[]) => {
-			categories = writable(cats.sort((a, b) => a.id - b.id));
 			console.log(cats);
+			return cats.sort((a, b) => a.id - b.id);
 		});
 }
 
@@ -29,8 +25,6 @@ export async function AddCategory(categoryName: string) {
 	}).then((response) => {
 		console.log(response.status);
 	});
-
-	await GetCategories();
 }
 
 export async function RemoveCategory(categoryId: number) {
@@ -39,8 +33,6 @@ export async function RemoveCategory(categoryId: number) {
 	}).then((response) => {
 		console.log(response.status);
 	});
-
-	await GetCategories();
 }
 
 export async function EditCategory(categoryId: number, oldCategoryName: string) {
@@ -56,6 +48,4 @@ export async function EditCategory(categoryId: number, oldCategoryName: string) 
 	}).then((response) => {
 		console.log(response.status);
 	});
-
-	await GetCategories();
 }
