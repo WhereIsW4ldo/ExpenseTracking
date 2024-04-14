@@ -7,6 +7,11 @@
 	export let showModal: boolean = false;
 	export let categories: Writable<Category[]>;
 
+	export let initialAmount: number;
+	export let initialDescription: string;
+	export let initialCategory: number;
+	export let initialDate: string;
+
 	export let transactionInputAmount = '';
 	export let transactionInputDescription = '';
 	export let transactionInputCategory = '';
@@ -15,7 +20,7 @@
 	export function ValidEnteredTransactionData(): boolean {
 		let amount = (document.getElementById('TransactionAmount') as HTMLInputElement)?.value;
 		let category = (<HTMLSelectElement>document.getElementById('TransactionCategory'))?.value;
-		let dateValue = (document.getElementById('TransactionDate') as HTMLInputElement)?.value;
+		let dateValue = (document.getElementsByName('TransactionDateName')[0] as HTMLInputElement)?.value;
 		let description = (document.getElementById('TransactionDescription') as HTMLTextAreaElement)
 			?.value;
 
@@ -78,7 +83,9 @@
 		}}
 	>
 		<label
-			>Amount: <input id="TransactionAmount" placeholder="amount" type="number" />
+			>Amount: <input id="TransactionAmount" placeholder="amount" type="number" value="{
+				initialAmount ?? 0
+			}"/>
 			<div id="TransactionAmountWarning" class="warning_text" hidden>
 				Please fix your money amount!
 			</div></label
@@ -102,7 +109,7 @@
 		</label>
 		<br />
 		<label
-			>ExpenseDate: <input id="TransactionDate" type="date" />
+			>ExpenseDate: <input id="TransactionDate" type="date" name="TransactionDateName"/>
 			<div id="TransactionDateWarning" class="warning_text" hidden>
 				Please fix your money date!
 			</div></label

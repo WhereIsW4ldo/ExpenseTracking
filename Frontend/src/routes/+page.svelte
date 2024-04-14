@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
+	import type { Category } from './CategoryApiInteractions';
+	import type { Transaction } from './TransactionApiInteractions';
+
+	import TransactionPopup from './TransactionPopup.svelte';
+	import Modal from './Modal.svelte';
+
 	import {
 		GetCategories,
 		AddCategory,
@@ -9,45 +15,11 @@
 	} from './CategoryApiInteractions';
 	import { GetTransactions, AddTransaction } from './TransactionApiInteractions';
 
-	export class Category {
-		public id: number;
-		public name: string;
-
-		constructor(id: number, name: string) {
-			this.id = id;
-			this.name = name;
-		}
-	}
-
-	export class Transaction {
-		public id: number;
-		public amount: number;
-		public description: string;
-		public category: Category;
-		public expenseDate: string;
-		public creationDate: string;
-
-		constructor(
-			id: number,
-			amount: number,
-			description: string,
-			category: Category,
-			expenseDate: string,
-			creationDate: string
-		) {
-			this.id = id;
-			this.amount = amount;
-			this.description = description;
-			this.category = category;
-			this.expenseDate = expenseDate;
-			this.creationDate = creationDate;
-		}
-	}
-
 	export let categories: Writable<Category[]> = writable([]);
 	export let transactions: Writable<Transaction[]> = writable([]);
 
 	let showModal: boolean = false;
+	let showModal2: boolean = false;
 
 	let value = '';
 	let submittedCategoryName: string = '';
@@ -57,9 +29,9 @@
 		transactions = writable(await GetTransactions());
 	});
 
-	let transactionInputAmount = '';
+	let transactionInputAmount = 10;
 	let transactionInputDescription = '';
-	let transactionInputCategory = '';
+	let transactionInputCategory = 92;
 	let transactionInputDate = '';
 
 	$: AddCategory(submittedCategoryName);
@@ -164,16 +136,19 @@
 	>
 </form>
 
+{#if showModal}
+	<TransactionPopup
+		bind:showModal
+		bind:categories
+		bind:initialAmount={transactionInputAmount}
+		bind:initialDescription={transactionInputDescription}
+		bind:initialCategory={transactionInputCategory}
+		bind:initialDate={transactionInputDate}
+	></TransactionPopup>
+{/if}
+
 <!-- <Modal bind:showModal>
-	<form
-		id="transactionForm"
-		on:submit|preventDefault={() => {
-			if (ValidEnteredTransactionData()) {
-				console.log('Valid transaction data!');
-				AddTransaction();
-			}
-		}}
-	>
+	<form id="transactionForm" on:submit|preventDefault={() => {}}>
 		<label
 			>Amount: <input id="TransactionAmount" placeholder="amount" type="number" />
 			<div id="TransactionAmountWarning" class="warning_text" hidden>

@@ -1,6 +1,6 @@
 import { Category } from './CategoryApiInteractions';
 
-class Transaction {
+export class Transaction {
 	public id: number;
 	public amount: number;
 	public description: string;
