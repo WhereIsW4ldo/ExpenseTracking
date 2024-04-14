@@ -147,43 +147,6 @@
 	></TransactionPopup>
 {/if}
 
-<!-- <Modal bind:showModal>
-	<form id="transactionForm" on:submit|preventDefault={() => {}}>
-		<label
-			>Amount: <input id="TransactionAmount" placeholder="amount" type="number" />
-			<div id="TransactionAmountWarning" class="warning_text" hidden>
-				Please fix your money amount!
-			</div></label
-		>
-		<br />
-		<label
-			>Description: <textarea id="TransactionDescription" placeholder="description"
-			></textarea></label
-		>
-		<br />
-		<label
-			>Category:
-			<select id="TransactionCategory">
-				{#each $categories as category}
-					<option value={category.id}>{category.name}</option>
-				{/each}
-			</select>
-			<div id="TransactionCategoryWarning" class="warning_text" hidden>
-				Please fix your money category!
-			</div>
-		</label>
-		<br />
-		<label
-			>ExpenseDate: <input id="TransactionDate" type="date" />
-			<div id="TransactionDateWarning" class="warning_text" hidden>
-				Please fix your money date!
-			</div></label
-		>
-		<br />
-		<input type="submit" value="Add Transaction" />
-	</form>
-</Modal> -->
-
 <h2>Transactions</h2>
 <table>
 	<thead>
