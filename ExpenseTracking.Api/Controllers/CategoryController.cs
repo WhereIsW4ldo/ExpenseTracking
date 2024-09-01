@@ -29,7 +29,7 @@ public class CategoryController
         }
     }
     
-    [HttpPut]
+    [HttpPost]
     public IActionResult AddCategory(string name)
     {
         try
@@ -59,7 +59,7 @@ public class CategoryController
         }
     }
     
-    [HttpPost]
+    [HttpPut]
     public IActionResult UpdateCategory(int id, string name)
     {
         try

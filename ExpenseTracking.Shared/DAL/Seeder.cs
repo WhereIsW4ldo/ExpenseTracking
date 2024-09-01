@@ -1,8 +1,6 @@
-﻿using ExpenseTracking.Shared.DAL;
-using ExpenseTracking.Shared.DataModels;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace ExpenseTracking.Api;
+namespace ExpenseTracking.Shared.DAL;
 
 public class Seeder
 {

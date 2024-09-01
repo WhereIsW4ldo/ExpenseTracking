@@ -16,13 +16,11 @@ public class TransactionController
     }
 
     [HttpGet]
-    public IActionResult GetExpenses(int? category)
+    public IActionResult GetExpenses()
     {
         try
         {
-            return category is null
-                ? new OkObjectResult(_service.GetTransactions())
-                : new OkObjectResult(_service.GetTransactionsForCategory(category.Value));
+            return new OkObjectResult(_service.GetTransactions());
         }
         catch (Exception e)
         {
@@ -30,8 +28,22 @@ public class TransactionController
             return new BadRequestObjectResult(e.Message);
         }
     }
+
+    [HttpGet]
+    public IActionResult GetExpenses(int category)
+    {
+        try
+        {
+            return new OkObjectResult(_service.GetTransactionsForCategory(category));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
     
-    [HttpPut]
+    [HttpPost]
     public IActionResult PutExpenses(double amount, string description, int categoryId, string expenseDate)
     {
         try
@@ -61,7 +73,7 @@ public class TransactionController
         }
     }
     
-    [HttpPost]
+    [HttpPut]
     public IActionResult UpdateTransaction(int id, double amount, string description, int categoryId, string expenseDate)
     {
         try
