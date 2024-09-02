@@ -1,20 +1,19 @@
 FROM node
 
-RUN npm install -g npm
-
 WORKDIR /Frontend
 
-COPY . .
+COPY . ./
 
-RUN npm ci
+RUN npm install
 
-RUN npm run build
+RUN ls 
 
-# RUN rm -rf src/ static/ emailTemplates/ docker-compose.yml
+COPY . ./
 
-# COPY . .
+RUN npm run-script build
 
-# RUN pnpm build
+EXPOSE 5000
 
-# EXPOSE 5173
-# CMD ["node", "build"]
+ENV HOST=0.0.0.0
+
+CMD [ "npm", "start" ]
