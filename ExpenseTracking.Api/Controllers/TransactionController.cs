@@ -28,20 +28,6 @@ public class TransactionController
             return new BadRequestObjectResult(e.Message);
         }
     }
-
-    [HttpGet]
-    public IActionResult GetExpenses(int category)
-    {
-        try
-        {
-            return new OkObjectResult(_service.GetTransactionsForCategory(category));
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
     
     [HttpPost]
     public IActionResult PutExpenses(double amount, string description, int categoryId, string expenseDate)

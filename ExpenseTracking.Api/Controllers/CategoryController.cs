@@ -29,13 +29,13 @@ public class CategoryController
         }
     }
     
-    [HttpPost]
+    [HttpPost("{name}")]
     public IActionResult AddCategory(string name)
     {
         try
         {
-            _service.AddCategory(name);
-            return new OkResult();
+            var category = _service.AddCategory(name);
+            return new OkObjectResult(category);
         }
         catch (Exception e)
         {
@@ -44,7 +44,7 @@ public class CategoryController
         }
     }
     
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     public IActionResult RemoveCategory(int id)
     {
         try

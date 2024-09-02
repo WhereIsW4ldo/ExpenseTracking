@@ -23,7 +23,7 @@ public class CategoryService
             .ToList();
     }
     
-    public void AddCategory(string name)
+    public Category AddCategory(string name)
     {
         var category = new Category
         {
@@ -31,6 +31,8 @@ public class CategoryService
         };
         _context.Categories.Add(category);
         _context.SaveChanges();
+
+        return category;
     }
 
     public Category RemoveCategory(int id)
